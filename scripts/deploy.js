@@ -25,7 +25,7 @@ if (!process.env.SFTP_PASSWORD && !process.env.SFTP_PRIVATE_KEY) {
 
 const deployConfig = {
   localRoot: projectRoot,
-  remoteRoot: process.env.SFTP_REMOTE_PATH.replace(/\/+$/, ''),
+  remoteRoot: normalizeRemotePath(process.env.SFTP_REMOTE_PATH),
   include: [
     '*.php',
     'style.css',
@@ -40,6 +40,31 @@ const deployConfig = {
 };
 
 const forceUpload = process.env.DEPLOY_FORCE === 'true';
+
+function normalizeRemotePath(remotePath) {
+  return remotePath.replace(/\/+$/, '');
+}
+
+async function resolveRemoteRoot(sftp, configuredPath) {
+  const trimmed = normalizeRemotePath(configuredPath);
+  const candidates = [trimmed];
+
+  if (trimmed.startsWith('/')) {
+    candidates.push(trimmed.slice(1));
+  } else {
+    candidates.push(`/${trimmed}`);
+  }
+
+  for (const candidate of candidates) {
+    if (await sftp.exists(candidate)) {
+      return candidate;
+    }
+  }
+
+  throw new Error(
+    `Remote-Pfad nicht gefunden: ${configuredPath} (probiert: ${candidates.join(', ')})`
+  );
+}
 
 function buildSftpConfig() {
   const config = {
@@ -110,17 +135,31 @@ function collectFiles(config) {
   return files;
 }
 
-async function ensureRemoteDir(sftp, remoteDir, cache) {
-  if (remoteDir === '/' || remoteDir === '.' || cache.has(remoteDir)) {
+async function ensureRemoteDir(sftp, remoteDir, remoteRoot, cache) {
+  if (remoteDir === remoteRoot || cache.has(remoteDir)) {
     return;
   }
 
-  const exists = await sftp.exists(remoteDir);
-  if (!exists) {
-    await sftp.mkdir(remoteDir, true);
+  const relative = remoteDir.slice(remoteRoot.length).replace(/^\/+/, '');
+  if (!relative) {
+    return;
   }
 
-  cache.add(remoteDir);
+  let current = remoteRoot;
+
+  for (const part of relative.split('/')) {
+    current = path.posix.join(current, part);
+
+    if (cache.has(current)) {
+      continue;
+    }
+
+    if (!(await sftp.exists(current))) {
+      await sftp.mkdir(current);
+    }
+
+    cache.add(current);
+  }
 }
 
 async function deploy() {
@@ -141,7 +180,7 @@ async function deploy() {
 
   const skipped = files.length - toUpload.length;
   console.log(
-    `Starte SFTP-Upload nach ${process.env.SFTP_HOST}${deployConfig.remoteRoot} ...`
+    `Starte SFTP-Upload nach ${process.env.SFTP_HOST}:${deployConfig.remoteRoot} ...`
   );
   console.log(
     `${toUpload.length} geändert, ${skipped} unverändert (${files.length} gesamt)${
@@ -159,13 +198,19 @@ async function deploy() {
 
   try {
     await sftp.connect(buildSftpConfig());
+    deployConfig.remoteRoot = await resolveRemoteRoot(sftp, deployConfig.remoteRoot);
     console.log(`Verbunden mit ${process.env.SFTP_HOST}`);
+    console.log(`Remote-Root: ${deployConfig.remoteRoot}`);
+
+    for (const file of toUpload) {
+      file.remotePath = path.posix.join(deployConfig.remoteRoot, file.relPath);
+    }
 
     let uploaded = 0;
 
     for (const file of toUpload) {
       const remoteDir = path.posix.dirname(file.remotePath);
-      await ensureRemoteDir(sftp, remoteDir, dirsCreated);
+      await ensureRemoteDir(sftp, remoteDir, deployConfig.remoteRoot, dirsCreated);
 
       uploaded += 1;
       console.log(`[${uploaded}/${toUpload.length}] ${file.relPath}`);
