@@ -117,5 +117,6 @@ out
 .pnp.*
 
 .DS_Store
+.deploy-manifest.json
 dist/
 Resources/

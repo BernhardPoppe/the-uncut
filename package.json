@@ -6,7 +6,9 @@
     "lint": "eslint .",
     "watch": "rm -rf .parcel-cache && rm -rf dist && parcel watch ./src/index.js ./src/theme.scss ./src/editor.scss",
     "build": "rm -rf .parcel-cache && rm -rf dist && parcel build ./src/index.js ./src/theme.scss ./src/editor.scss",
-    "deploy": "npm run build"
+    "deploy": "npm run build && node scripts/git-commit.js && node scripts/deploy.js",
+    "deploy:force": "npm run build && node scripts/git-commit.js && DEPLOY_FORCE=true node scripts/deploy.js",
+    "ssh": "node scripts/ssh-connect.mjs"
   },
   "author": "",
   "license": "ISC",
@@ -23,21 +25,16 @@
   },
   "postcss": {
     "plugins": {
-      "autoprefixer": {
-        "overrideBrowserslist": [
-          "> 1%",
-          "last 4 versions",
-          "ie >= 9"
-        ]
-      },
       "cssnano": {}
     }
   },
   "devDependencies": {
-    "autoprefixer": "^10.2.6",
+    "dotenv": "^16.4.7",
     "eslint": "^7.31.0",
+    "ftp-deploy": "^2.4.3",
     "parcel-namer-rewrite": "^2.0.0-rc.2",
-    "parcel-reporter-bundle-manifest": "^1.0.0"
+    "parcel-reporter-bundle-manifest": "^1.0.0",
+    "ssh2-sftp-client": "^12.1.1"
   },
   "parcel-namer-rewrite": {
     "chain": "@parcel/namer-default",
