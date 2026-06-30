@@ -1,0 +1,49 @@
+{
+  "name": "the-uncut",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "lint": "eslint .",
+    "watch": "rm -rf .parcel-cache && rm -rf dist && parcel watch ./src/index.js ./src/theme.scss ./src/editor.scss",
+    "build": "rm -rf .parcel-cache && rm -rf dist && parcel build ./src/index.js ./src/theme.scss ./src/editor.scss",
+    "deploy": "npm run build"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@barba/core": "^2.10.0",
+    "@parcel/transformer-sass": "^2.13.3",
+    "autocomplete": "^0.0.1",
+    "cssnano": "^5.0.6",
+    "flickity": "^3.0.0",
+    "fullpage.js": "^4.0.22",
+    "matter-js": "^0.19.0",
+    "parcel": "^2.13.3",
+    "postcss": "^8.3.5"
+  },
+  "postcss": {
+    "plugins": {
+      "autoprefixer": {
+        "overrideBrowserslist": [
+          "> 1%",
+          "last 4 versions",
+          "ie >= 9"
+        ]
+      },
+      "cssnano": {}
+    }
+  },
+  "devDependencies": {
+    "autoprefixer": "^10.2.6",
+    "eslint": "^7.31.0",
+    "parcel-namer-rewrite": "^2.0.0-rc.2",
+    "parcel-reporter-bundle-manifest": "^1.0.0"
+  },
+  "parcel-namer-rewrite": {
+    "chain": "@parcel/namer-default",
+    "rules": {
+      "theme.css": "theme{.hash}.css",
+      "index.js": "index{.hash}.js"
+    }
+  }
+}

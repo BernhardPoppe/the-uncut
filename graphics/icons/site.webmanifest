@@ -1,0 +1,14 @@
+{
+  "name": "the uncut",
+  "short_name": "uncut",
+  "icons": [
+    {
+      "src": "touch.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    }
+  ],
+  "theme_color": "#ffffff",
+  "background_color": "#ffffff",
+  "display": "standalone"
+}
