@@ -3,6 +3,9 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
+// Adminbar-Bump (weißer Streifen oben) auf Coming-Soon-Seite verhindern.
+show_admin_bar(false);
+
 $assets     = get_template_directory_uri() . '/graphics/coming-soon';
 $hero_image = $assets . '/hero.jpg';
 $zip_teeth  = $assets . '/zipper.png';
@@ -19,7 +22,7 @@ $zip_end    = $assets . '/zipper-end.png';
 	<link href="<?php echo esc_url(get_template_directory_uri()); ?>/graphics/icons/favicon.ico" rel="shortcut icon">
 	<link rel="preconnect" href="https://fonts.googleapis.com">
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-	<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;800&display=swap" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700;800&display=swap" rel="stylesheet">
 	<?php wp_head(); ?>
 	<style>
 		*,
@@ -40,6 +43,15 @@ $zip_end    = $assets . '/zipper-end.png';
 		}
 
 		body.coming-soon #cookie-banner {
+			display: none !important;
+		}
+
+		/* Adminbar-Bump-Fallback */
+		html:has(body.coming-soon) {
+			margin-top: 0 !important;
+		}
+
+		body.coming-soon #wpadminbar {
 			display: none !important;
 		}
 
@@ -103,8 +115,7 @@ $zip_end    = $assets . '/zipper-end.png';
 
 		.coming-soon__headline-wrap {
 			display: flex;
-			align-items: flex-start;
-			justify-content: center;
+			align-items: center;
 			min-height: 0;
 			overflow: hidden;
 		}
@@ -121,7 +132,6 @@ $zip_end    = $assets . '/zipper-end.png';
 			padding: 0;
 			hyphens: none;
 			white-space: nowrap;
-			text-align: center;
 		}
 
 		.coming-soon__headline span {
@@ -130,7 +140,7 @@ $zip_end    = $assets . '/zipper-end.png';
 
 		.coming-soon__contact {
 			font-family: "Poppins", sans-serif;
-			font-weight: 400;
+			font-weight: 700;
 			font-size: 0.7rem;
 			line-height: 1.45;
 			margin: 0;
