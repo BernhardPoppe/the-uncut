@@ -3,7 +3,11 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-$hero_image = get_template_directory_uri() . '/graphics/coming-soon/hero.jpg';
+$assets     = get_template_directory_uri() . '/graphics/coming-soon';
+$hero_image = $assets . '/hero.jpg';
+$zip_teeth  = $assets . '/zipper.png';
+$zip_head   = $assets . '/zipper-head.png';
+$zip_end    = $assets . '/zipper-end.png';
 ?>
 <!doctype html>
 <html <?php language_attributes(); ?>>
@@ -13,16 +17,11 @@ $hero_image = get_template_directory_uri() . '/graphics/coming-soon/hero.jpg';
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title><?php bloginfo('name'); ?> – Coming Soon</title>
 	<link href="<?php echo esc_url(get_template_directory_uri()); ?>/graphics/icons/favicon.ico" rel="shortcut icon">
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@800&display=swap" rel="stylesheet">
 	<?php wp_head(); ?>
 	<style>
-		@font-face {
-			font-family: "headingnow_extrabold";
-			src: url("<?php echo esc_url(get_template_directory_uri()); ?>/graphics/fonts/headingnow-47extrabold-webfont.woff2") format("woff2"),
-				url("<?php echo esc_url(get_template_directory_uri()); ?>/graphics/fonts/headingnow-47extrabold-webfont.woff") format("woff");
-			font-weight: normal;
-			font-style: normal;
-		}
-
 		*,
 		*::before,
 		*::after {
@@ -36,7 +35,7 @@ $hero_image = get_template_directory_uri() . '/graphics/coming-soon/hero.jpg';
 		}
 
 		body.coming-soon {
-			background: #ff3e11;
+			background: #fff;
 			overflow: hidden;
 		}
 
@@ -46,6 +45,7 @@ $hero_image = get_template_directory_uri() . '/graphics/coming-soon/hero.jpg';
 
 		.coming-soon {
 			--cs-space: clamp(1rem, 2.5vw, 2.5rem);
+			position: relative;
 			display: grid;
 			grid-template-columns: 1fr 1fr;
 			width: 100vw;
@@ -54,14 +54,50 @@ $hero_image = get_template_directory_uri() . '/graphics/coming-soon/hero.jpg';
 			padding: 0;
 		}
 
+		/* Reißverschluss auf der Trennlinie */
+		.coming-soon__zipper {
+			/* --zip-w = Bildschirmbreite der Zähne (Original 74px); alles andere leitet sich davon ab */
+			--zip-w: clamp(18px, 2vw, 26px);
+			position: absolute;
+			top: 0;
+			bottom: 0;
+			left: 50%;
+			width: calc(var(--zip-w) * 117 / 74);
+			transform: translateX(-50%);
+			z-index: 3;
+			pointer-events: none;
+			background-image: url("<?php echo esc_url($zip_teeth); ?>");
+			background-repeat: repeat-y;
+			background-position: center top;
+			background-size: var(--zip-w) auto;
+		}
+
+		.coming-soon__zipper img {
+			position: absolute;
+			left: 50%;
+			transform: translateX(-50%);
+			display: block;
+			height: auto;
+		}
+
+		.coming-soon__zipper .coming-soon__zipper-head {
+			top: 0;
+			width: calc(var(--zip-w) * 117 / 74);
+		}
+
+		.coming-soon__zipper .coming-soon__zipper-end {
+			bottom: 0;
+			width: calc(var(--zip-w) * 71 / 74);
+		}
+
 		.coming-soon__left {
 			display: grid;
 			grid-template-rows: 1fr auto;
 			gap: var(--cs-space);
 			min-width: 0;
 			min-height: 0;
-			background: #ff3e11;
-			color: #000;
+			background: #fff;
+			color: #a4a4a4;
 			padding: var(--cs-space);
 		}
 
@@ -73,12 +109,13 @@ $hero_image = get_template_directory_uri() . '/graphics/coming-soon/hero.jpg';
 		}
 
 		.coming-soon__headline {
-			font-family: "headingnow_extrabold", sans-serif;
+			font-family: "Poppins", sans-serif;
 			font-size: 48px;
-			font-weight: normal;
+			font-weight: 800;
 			line-height: 0.82;
 			letter-spacing: -0.02em;
 			text-transform: uppercase;
+			color: #f2f2ea;
 			margin: 0;
 			padding: 0;
 			hyphens: none;
@@ -136,6 +173,10 @@ $hero_image = get_template_directory_uri() . '/graphics/coming-soon/hero.jpg';
 				height: 100dvh;
 				min-height: 100dvh;
 			}
+
+			.coming-soon__zipper {
+				display: none;
+			}
 		}
 	</style>
 </head>
@@ -146,8 +187,8 @@ $hero_image = get_template_directory_uri() . '/graphics/coming-soon/hero.jpg';
 			<div class="coming-soon__headline-wrap">
 				<h1 class="coming-soon__headline">
 					<span>New</span>
-					<span>Website</span>
-					<span>Loading</span>
+					<span>Chapter</span>
+					<span>Loading...</span>
 				</h1>
 			</div>
 			<footer class="coming-soon__contact">
@@ -157,6 +198,10 @@ $hero_image = get_template_directory_uri() . '/graphics/coming-soon/hero.jpg';
 		</div>
 		<div class="coming-soon__right">
 			<img src="<?php echo esc_url($hero_image); ?>" alt="" width="512" height="576" decoding="async">
+		</div>
+		<div class="coming-soon__zipper" aria-hidden="true">
+			<img class="coming-soon__zipper-end" src="<?php echo esc_url($zip_end); ?>" alt="" decoding="async">
+			<img class="coming-soon__zipper-head" src="<?php echo esc_url($zip_head); ?>" alt="" decoding="async">
 		</div>
 	</main>
 	<script>
