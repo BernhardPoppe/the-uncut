@@ -127,7 +127,7 @@ $zip_end    = $assets . '/zipper-end.png';
 			line-height: 0.82;
 			letter-spacing: -0.02em;
 			text-transform: uppercase;
-			color: #dfdfd7;
+			color: #f0f0e7;
 			margin: 0;
 			padding: 0;
 			hyphens: none;
@@ -141,9 +141,10 @@ $zip_end    = $assets . '/zipper-end.png';
 		.coming-soon__contact {
 			font-family: "Poppins", sans-serif;
 			font-weight: 700;
-			font-size: 0.7rem;
+			font-size: 0.9rem;
 			line-height: 1.45;
 			margin: 0;
+			padding-bottom: var(--cs-space);
 		}
 
 		.coming-soon__contact p {
