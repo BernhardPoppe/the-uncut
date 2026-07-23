@@ -115,7 +115,7 @@ $zip_end    = $assets . '/zipper-end.png';
 			line-height: 0.82;
 			letter-spacing: -0.02em;
 			text-transform: uppercase;
-			color: #f2f2ea;
+			color: #dfdfd7;
 			margin: 0;
 			padding: 0;
 			hyphens: none;
@@ -174,8 +174,15 @@ $zip_end    = $assets . '/zipper-end.png';
 				min-height: 100dvh;
 			}
 
+			/* Zipper horizontal auf der Naht zwischen den beiden Zeilen */
 			.coming-soon__zipper {
-				display: none;
+				top: 50%;
+				bottom: auto;
+				left: 50%;
+				height: 100vw;
+				width: calc(var(--zip-w) * 117 / 74);
+				transform: translate(-50%, -50%) rotate(90deg);
+				transform-origin: center center;
 			}
 		}
 	</style>
