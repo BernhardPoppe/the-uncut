@@ -109,7 +109,7 @@ $zip_end    = $assets . '/zipper-end.png';
 			min-width: 0;
 			min-height: 0;
 			background: #fff;
-			color: #a4a4a4;
+			color: #7b7b72;
 			padding: var(--cs-space);
 		}
 
@@ -127,7 +127,7 @@ $zip_end    = $assets . '/zipper-end.png';
 			line-height: 0.82;
 			letter-spacing: -0.02em;
 			text-transform: uppercase;
-			color: #f0f0e7;
+			color: #7b7b72;
 			margin: 0;
 			padding: 0;
 			hyphens: none;
