@@ -19,7 +19,7 @@ $zip_end    = $assets . '/zipper-end.png';
 	<link href="<?php echo esc_url(get_template_directory_uri()); ?>/graphics/icons/favicon.ico" rel="shortcut icon">
 	<link rel="preconnect" href="https://fonts.googleapis.com">
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-	<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@800&display=swap" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;800&display=swap" rel="stylesheet">
 	<?php wp_head(); ?>
 	<style>
 		*,
@@ -104,6 +104,7 @@ $zip_end    = $assets . '/zipper-end.png';
 		.coming-soon__headline-wrap {
 			display: flex;
 			align-items: flex-start;
+			justify-content: center;
 			min-height: 0;
 			overflow: hidden;
 		}
@@ -120,6 +121,7 @@ $zip_end    = $assets . '/zipper-end.png';
 			padding: 0;
 			hyphens: none;
 			white-space: nowrap;
+			text-align: center;
 		}
 
 		.coming-soon__headline span {
@@ -127,7 +129,8 @@ $zip_end    = $assets . '/zipper-end.png';
 		}
 
 		.coming-soon__contact {
-			font-family: ui-monospace, "SFMono-Regular", "Roboto Mono", "Courier New", monospace;
+			font-family: "Poppins", sans-serif;
+			font-weight: 400;
 			font-size: 0.7rem;
 			line-height: 1.45;
 			margin: 0;
@@ -174,9 +177,9 @@ $zip_end    = $assets . '/zipper-end.png';
 				min-height: 100dvh;
 			}
 
-			/* Zipper horizontal auf der Naht zwischen den beiden Zeilen */
+			/* Zipper horizontal, mittig auf der Oberkante des Fotos (halb darüber) */
 			.coming-soon__zipper {
-				top: 50%;
+				top: calc(50% + var(--cs-space));
 				bottom: auto;
 				left: 50%;
 				height: 100vw;
