@@ -123,8 +123,8 @@ $zip_end    = $assets . '/zipper-end.png';
 		.coming-soon__headline {
 			font-family: "Poppins", sans-serif;
 			font-size: 48px;
-			font-weight: 800;
-			line-height: 0.82;
+			font-weight: 700;
+			line-height: 0.95;
 			letter-spacing: -0.02em;
 			text-transform: uppercase;
 			color: #7b7b72;
