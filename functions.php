@@ -481,7 +481,7 @@ function my_custom_settings() {
     add_settings_section('section', 'All Settings', null, 'theme-options');
     add_settings_field(
         'coming_soon_mode',
-        'Enable Coming Soon Mode',
+        'Site Mode',
         'coming_soon_mode_callback',
         'theme-options',
         'section'
@@ -490,15 +490,31 @@ function my_custom_settings() {
 add_action('admin_init', 'my_custom_settings');
 
 function uncut_sanitize_coming_soon_mode($value) {
-    return $value === '1' ? '1' : '0';
+    $allowed = array('0', '1', 'moved');
+    return in_array($value, $allowed, true) ? $value : '0';
+}
+
+function uncut_get_site_mode() {
+    $mode = get_option('coming_soon_mode', '0');
+    if ($mode === 'moved') {
+        return 'moved';
+    }
+    if ($mode === '1') {
+        return 'coming_soon';
+    }
+    return 'off';
 }
 
 function uncut_is_coming_soon_enabled() {
-    return get_option('coming_soon_mode') === '1';
+    return uncut_get_site_mode() === 'coming_soon';
+}
+
+function uncut_is_moved_enabled() {
+    return uncut_get_site_mode() === 'moved';
 }
 
 function uncut_should_show_coming_soon() {
-    if (!uncut_is_coming_soon_enabled()) {
+    if (uncut_get_site_mode() === 'off') {
         return false;
     }
 
@@ -515,14 +531,35 @@ function uncut_should_show_coming_soon() {
 }
 
 function coming_soon_mode_callback() {
-    $enabled = uncut_is_coming_soon_enabled();
-    echo '<input type="hidden" name="coming_soon_mode" value="0" />';
-    echo '<input type="checkbox" id="coming_soon_mode" name="coming_soon_mode" value="1" ' . checked($enabled, true, false) . ' />';
+    $mode = get_option('coming_soon_mode', '0');
+    if (!in_array($mode, array('0', '1', 'moved'), true)) {
+        $mode = '0';
+    }
+
+    $options = array(
+        '0' => 'Aus — normale Website',
+        '1' => 'Coming Soon',
+        'moved' => 'Moved',
+    );
+
+    foreach ($options as $value => $label) {
+        echo '<label style="display:block;margin:.35em 0;">';
+        echo '<input type="radio" name="coming_soon_mode" value="' . esc_attr($value) . '" ' . checked($mode, $value, false) . ' /> ';
+        echo esc_html($label);
+        echo '</label>';
+    }
+
     echo '<p class="description">Gilt für alle Besucher. Eingeloggte Admins sehen weiterhin die normale Website. Zum Testen: Ausloggen oder Inkognito-Fenster nutzen.</p>';
 }
 
 function uncut_coming_soon_admin_notice() {
-    if (!uncut_is_coming_soon_enabled()) {
+    $mode = uncut_get_site_mode();
+    if ($mode === 'off') {
+        return;
+    }
+
+    if ($mode === 'moved') {
+        echo '<div class="notice notice-warning"><p><strong>Moved Mode ist aktiv.</strong> Besucher sehen die Moved-Seite. Du siehst sie nur im Inkognito-Fenster oder nach dem Ausloggen.</p></div>';
         return;
     }
 
@@ -564,7 +601,9 @@ function display_coming_soon_page() {
 
     status_header(200);
     nocache_headers();
-    include(get_template_directory() . '/coming-soon.php');
+
+    $template = uncut_get_site_mode() === 'moved' ? '/moved.php' : '/coming-soon.php';
+    include(get_template_directory() . $template);
     exit();
 }
 add_action('template_redirect', 'display_coming_soon_page', 0);
